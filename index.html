@@ -1,0 +1,916 @@
+<style>
+
+
+    .node {
+        stroke: #fff;
+        stroke-width: 1.5px;
+    }
+
+    .link {
+        stroke: #999;
+        stroke-opacity: .6;
+    }
+
+    .label {
+        font-size: 75%;
+        stroke: #000;
+        stroke-width: 0.3px;
+        stroke-opacity: 1;
+        font-weight: 400;
+        text-align: left;
+    }
+
+    #top-graph-control {
+        position: absolute;
+        left: 680px;
+        top: 100px;
+    }
+
+    form {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+    }
+
+    .tooltip{
+        position: absolute;
+        z-index: 10;
+        visibility: hidden;
+        background-color: rgba(255,255,255, 0.8);
+        border: 1px solid #E0E0E0;
+        border-radius: 4px;
+        opacity: 1;
+    }
+
+
+    .graticule {
+        fill: none;
+        stroke: #fff;
+        stroke-width: .5px;
+    }
+
+    .land {
+        fill: #007421;
+    }
+
+    .dot {
+        /*fill: #c7141a;*/
+        /*fill: green;*/
+    }
+
+    .ring {
+        fill: none;
+        stroke: #c7141a;
+    }
+
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: black;
+        /*shape-rendering: crispEdges;*/
+    }
+
+    .axis circle {
+        fill: none;
+        stroke: lightgrey;
+        opacity: 0.7;
+        /*stroke-dasharray: 1,4;*/
+    }
+
+    .axis text {
+        font-family: sans-serif;
+        font-size: 11px;
+    }
+
+    .grid .tick {
+        stroke: lightgrey;
+        opacity: 0.7;
+    }
+    /*.grid path {
+          stroke-width: 0;
+    }*/
+
+    .grid circle {
+        fill: none;
+        stroke: #666;
+        opacity: 0.7;
+        /* stroke-dasharray: 1,4; */
+    }
+
+    .grid path {
+        stroke: lightgrey;
+        opacity: 0.7;
+    }
+
+    .top-control{
+        max-width: 185px;
+        width: 185px;
+        margin-right: 10px;
+    }
+    #top-control .select2-container .select2-choice > .select2-chosen {
+        height: 24px;
+        line-height: 24px;
+        font-size: 12px;
+        font-weight: 400;
+    }
+    #top-control .select2-container .select2-choice {
+        height: 26px;
+        line-height: 24px;
+        font-size: 12px;
+        font-weight: 400;
+    }
+    #top-control .select2-container .select2-choice .select2-arrow b:after {
+        font-size: 14px;
+    }
+
+    .graph-container {
+        margin: 0 auto;
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+        max-width: 925px;
+    }
+    .graph-wrapper {
+        position: relative;
+        margin: -10px auto -45px;
+    }
+    .graph-container svg {
+        margin: 0 auto;
+    }
+    .bottom-graph-slider {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    .select2-drop.select2-display-none.usage-page-select-2.select2-with-searchbox.select2-drop-active {
+        margin-left: 0!important;
+    }
+    .usage-page-wrapper .tooltip {
+        box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 4px;
+        border: none;
+        padding: 10px;
+        border-radius: 3px;
+    }
+    .usage-page-wrapper .up-input {
+        height: 26px;
+        line-height: 26px;
+        font-size: 13px;
+    }
+
+    #dLegendWrapper {
+        position: relative;
+        z-index: 100;
+        margin-bottom: 70px;
+    }
+    #dVizPopup #dLegendWrapper{
+        margin-bottom: 0;
+    }
+    .main-control-box {
+        position: relative;
+        margin: 50px auto 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px 10px;
+        max-width: 925px;
+        width: 100%;
+        box-shadow: 0 0 5px 0 rgba(0,0,0,0.20);
+        border-radius: 1px;
+    }
+    .slider-day-elapsed {
+        position:relative;
+        height: 8px;
+        border-radius: 0;
+        margin: 0 15px 0 10px;
+        width: 450px;
+        background: #FFFFFF;
+        border: 1px solid #D5D5D5;
+        border-left: none;
+        border-right: none;
+    }
+    .slider-day-elapsed:before {
+        content: '';
+        position: absolute;
+        top: -4px;
+        left: 0;
+        height: 14px;
+        width: 1px;
+        background-color: #D8D8D8;
+    }
+    .slider-day-elapsed:after {
+        content: '';
+        position: absolute;
+        top: -4px;
+        right: 0;
+        height: 14px;
+        width: 1px;
+        background-color: #D8D8D8;
+    }
+    .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+        top: -7px;
+        height: 20px;
+        width: 20px;
+        background: #37809F;
+        border-radius: 3px;
+        border: none;
+    }
+    .slider-day-elapsed__full-date {
+        position: absolute;
+        top: -20px;
+        left: -30px;
+        font-family: Arial, sans-serif;
+        font-size: 11px;
+        color: #222222;
+        width: 80px;
+        text-align: center;
+    }
+    .slider-day-elapsed__days {
+        position: absolute;
+        bottom: -20px;
+        left: -30px;
+        font-size: 11px;
+        font-family: Arial, sans-serif;
+        color: #222222;
+        width: 80px;
+        text-align: center;
+    }
+    .slider-day-history {
+        margin-left: 4px;
+        font-size: 13px;
+        color: #222222;
+    }
+    .btn.btn-xs-small.graph-slider-play-btn {
+        border-radius: 3px;
+        width: 66px;
+        display: flex;
+        justify-content: center;
+        font-size: 11px;
+
+    }
+    .graph-slider-play-btn .fa {
+        margin-top: 3px;
+        font-size: 14px;
+        margin-right: 2px;
+    }
+    .up-legend-container {
+        display: inline-flex;
+        flex-wrap: wrap;
+        width: 720px;
+        max-width: 100%;
+        padding: 10px 15px 0;
+        box-shadow: 0 0 5px 0 rgba(0,0,0,0.20);
+        border-radius: 1px;
+        font-size: 13px;
+        color: #7D7D7D;
+    }
+    .legend-item {
+        width: 33.3%;
+        position: relative;
+        white-space: nowrap;
+        margin-bottom: 10px;
+        padding-right: 10px;
+        padding-left: 15px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .legend-item-color {
+        position: absolute;
+        top: 3px;
+        left: 0;
+        height: 10px;
+        width: 10px;
+        border-radius: 50%;
+        margin-right: 3px;
+    }
+    .graph-control-user {
+        padding: 8px 12px;
+        white-space: nowrap;
+        position: absolute;
+        top: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #FFFFFF;
+        border: 1px solid rgba(55,128,159,0.50);
+        border-radius: 1px;
+        text-align: center;
+    }
+    .graph-control-user__title {
+        font-size: 18px;
+        color: #37809F;
+    }
+    .graph-control-user__text {
+        color: #222222;
+        font-size: 13px;
+    }
+    .popup_inner .main-control-box {
+        margin-top: 0;
+    }
+    .usage-page-table__col-r.usage-page-table__col-with-icon {
+        min-width: 65px;
+        max-width: 65px;
+        display: flex;
+        padding-left: 3px;
+        padding-right: 3px;
+        align-items: center;
+        justify-content: flex-end;
+        border-left: 1px solid #EBEBEB;
+        cursor: pointer;
+    }
+
+    .usage-page-table__view-icon {
+        margin-left: 5px;
+        height: 14px;
+        transition: all 0.3s;
+        cursor: pointer;
+        opacity: 0.2;
+    }
+    .usage-page-table__row:hover .usage-page-table__view-icon {
+        transform: scale(1.3, 1.3);
+    }
+    .usage-page-table__col-with-icon:hover .usage-page-table__view-icon {
+        opacity: 1;
+    }
+    .usage-page-table__view-count {
+        padding: 2px;
+        border-radius: 3px;
+        transition: all 0.3s;
+        font-size: 12px;
+        line-height: 12px;
+        color: #37809F;
+        background-color: rgba(55, 128, 159, 0.2);
+    }
+    .usage-page-table__col-with-icon:hover .usage-page-table__view-count{
+        color: #fff;
+        background-color: #37809F;
+    }
+    .usage-page-table-f-table__titles {
+        padding-top: 0;
+        padding-bottom: 0;
+        font-weight: 700;
+    }
+    .usage-page-table-f-table__titles .usage-page-table-f-table__col-r {
+        justify-content: center;
+    }
+    .usage-page-table-f-table__col-r {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        width: 65px;
+        min-widtH: 65px;
+        max-width: 65px;
+        border-left: 1px solid #EBEBEB;
+        margin: 0;
+    }
+    .usage-page-table-f-table__col-r:last-child {
+        width: 60px;
+        min-width: 60px;
+        max-width: 60px;
+        justify-content: flex-end;
+    }
+    .usage-page-table__row__data .usage-page-table-f-table__col-r {
+        padding-right: 5px;
+    }
+    .usage-page-table__row__data .usage-page-table-f-table__col-r:last-child {
+        padding-right: 0;
+    }
+    .usage-page-table-f-table__titles .usage-page-table-f-table__col-r {
+        text-align: center;
+        padding: 18px 0;
+    }
+    .usage-page-table-f-table__titles .usage-page-table__col-1 {
+        padding: 18px 0;
+    }
+    html:not(.isMobileDevice):not(.without-scroll-fix):not(.mod_new_editor_view) .selectPopupWrapper {
+        margin-left: 0!important;
+    }
+</style>
+<script src="/js/libs/custom/usage-page/lib.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        /*var filtersDatasetId = 14628,
+            datasets = {
+                "mostPopular":{"id":14629,"sort":"total_view_count"},
+                "increasingPopularity":{"id":14630,"sort":"score"},
+                "unusedTiles":{"id":14631,"sort":"total_view_count"},
+                "decreasingPopularity":{"id":14632,"sort":"score"},
+                "successfulSearches":{"id":14633,"sort":"searches_count"},
+                "unsuccessfulSearches":{"id":14634,"sort":"searches_count"}
+            };*/
+
+
+        var filtersDatasetId = 'filters-dataset',
+            datasets = {
+                "mostPopular":{"id":'most-popular',"sort":"total_view_count"},
+                "increasingPopularity":{"id":'increasing-popularity',"sort":"score"},
+                "unusedTiles":{"id":'unused-tiles',"sort":"total_view_count"},
+                "decreasingPopularity":{"id":'decreasing-popularity',"sort":"score"},
+                "successfulSearches":{"id":'successful-searches',"sort":"searches_count"},
+                "unsuccessfulSearches":{"id":'unsuccessful-searches',"sort":"searches_count"}
+            };
+
+
+
+
+        var linkReport = {"id":1867, "filter":"name"}
+            , unusedReport = {"id":1868, "filter":"name"}
+            ,templates={
+            "rowTemplate1": _.template($('#rowTemplate1').html())
+            ,"rowTemplate2": _.template($('#rowTemplate2').html())
+            ,"rowTemplate3": _.template($('#rowTemplate3').html())
+            ,"rowTemplate4": _.template($('#rowTemplate4').html())
+        }
+            ,waitLoad = 7;
+
+        var filterData = function(k, data){
+            //console.log(data);
+            var filterParams = [];
+            $('.pp_filter').each(function(){
+                var el = $(this);
+                if(''!==el.val())
+                    filterParams.push({"id":el.attr('id'), "val":el.val()});
+            });
+
+            return _.sortBy(_.filter(data, function(a){
+                    for (var i = 0; i < filterParams.length; i++)
+                        if('undefined'!==typeof(a[filterParams[i].id]) && filterParams[i].val!=a[filterParams[i].id])
+                            return false;
+
+                    return true;
+                })
+                , function(a){ return -a[datasets[k].sort]; }).splice(0,25);
+        };
+
+        var renderGrids = function(){
+            for (var k in datasets) if(datasets.hasOwnProperty(k))
+                $('.usage-page-wrapper').find('#'+k).each(function(){
+                    var el = $(this);
+                    el.append(templates[el.data('template')]({"$T":{"dataset_id":datasets[k].id, 'linkReport':linkReport, "unusedReport":unusedReport, "data":filterData(k, datasets[k].data)}}));
+                });
+        };
+
+        var renderFilters = function(data){
+            $('.pp_filter').each(function(){
+                var el = $(this)
+                    ,title = el.attr('name')
+                    ,html = '';
+
+                for (var i = 0; i < data.length; i++)
+                    if(title===data[i].title)
+                        html += '<option value="'+data[i].id+'">'+data[i].name+'</option>';
+
+                el.append(html);
+
+                el.bind('change', function(){
+                    $('.usage-page-table__row__data').remove();
+                    renderGrids();
+                });
+            });
+        };
+
+        // $.ajax({"url":'/api/dataset_data?dataset='+filtersDatasetId
+        $.ajax({"url":'/data/page/usage-page-git/'+filtersDatasetId
+            ,"dataType":"json"
+            ,success:function(response){
+                if(response && response.data) {
+                    renderFilters(response.data);
+
+                    waitLoad--;
+                    if(0===waitLoad)
+                        renderGrids();
+                } else
+                    console.log('Invalid dataset filters data load ');
+            }
+        });
+
+        for (var k in datasets) if(datasets.hasOwnProperty(k)){
+            (function(k, v){
+                //$.ajax({"url":'/api/dataset_data?dataset='+v.id
+                $.ajax({"url":'/data/page/usage-page-git/'+v.id
+                    ,"dataType":"json"
+                    ,success:function(response){
+                        if(response && response.data) {
+                            datasets[k].data = response.data;
+                            waitLoad--;
+                            if(0===waitLoad)
+                                renderGrids();
+                        } else
+                            console.log('Invalid dataset data load '+k);
+                    }
+                });
+            })(k, datasets[k]);
+        }
+    });
+</script>
+<link rel="stylesheet" href="/css/libs/custom/usage.css">
+
+<div class="usage-page-wrapper">
+    <ul class="usage-page-tabs t-blue">
+        <li class="usage-page-tab active" data-target="content-usage">
+            <img class="usage-page-tab__svg" src="data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='16px' height='13px' viewBox='0 0 16 13' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3C!-- Generator: Sketch 61.1 (89650) - https://sketch.com --%3E%3Ctitle%3Efa-bar-chart-o%3C/title%3E%3Cdesc%3ECreated with Sketch.%3C/desc%3E%3Cg id='Usage-Portal' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd' opacity='0.746419271'%3E%3Cg id='UsagePortal-Content' transform='translate(-573.000000, -60.000000)' fill='%2337809F'%3E%3Cg id='Group-2' transform='translate(573.000000, 59.000000)'%3E%3Cg id='fa-bar-chart-o' transform='translate(0.000000, 1.000000)'%3E%3Cpath d='M0.868473256,12.4939949 C1.12909471,12.7404241 1.43293804,12.8707348 1.78064834,12.8707348 L14.711085,12.8707348 C15.0587953,12.8707348 15.3626386,12.7404241 15.6232601,12.4939949 C15.8696893,12.2333734 16,11.9295301 16,11.5818198 L16,1.76464834 C16,1.41693804 15.8696893,1.11309471 15.6232601,0.852473256 C15.3626386,0.60604406 15.0587953,0.475733333 14.711085,0.475733333 L1.78064834,0.475733333 C1.43293804,0.475733333 1.12909471,0.60604406 0.868473256,0.852473256 C0.62204406,1.11309471 0.491733333,1.41693804 0.491733333,1.76464834 L0.491733333,11.5818198 C0.491733333,11.9295301 0.62204406,12.2333734 0.868473256,12.4939949 L0.868473256,12.4939949 Z M1.52002689,1.76464834 C1.52002689,1.69239685 1.54905651,1.63433762 1.59227838,1.57627838 C1.65033762,1.53305651 1.70839685,1.50402689 1.78064834,1.50402689 L14.711085,1.50402689 C14.7833365,1.50402689 14.8413957,1.53305651 14.899455,1.57627838 C14.9426768,1.63433762 14.9717064,1.69239685 14.9717064,1.76464834 L14.9717064,11.5818198 C14.9717064,11.6540713 14.9426768,11.7121305 14.899455,11.7701898 C14.8413957,11.8134116 14.7833365,11.8424413 14.711085,11.8424413 L1.78064834,11.8424413 C1.70839685,11.8424413 1.65033762,11.8134116 1.59227838,11.7701898 C1.54905651,11.7121305 1.52002689,11.6540713 1.52002689,11.5818198 L1.52002689,1.76464834 L1.52002689,1.76464834 Z M2.5625127,10.8141477 L4.63329207,10.8141477 L4.63329207,7.71571989 L2.5625127,7.71571989 L2.5625127,10.8141477 Z M5.66158562,10.8141477 L7.73236499,10.8141477 L7.73236499,3.57416115 L5.66158562,3.57416115 L5.66158562,10.8141477 Z M8.76001344,10.8141477 L10.8307928,10.8141477 L10.8307928,5.64494052 L8.76001344,5.64494052 L8.76001344,10.8141477 Z M11.8732786,10.8141477 L13.944058,10.8141477 L13.944058,2.5465127 L11.8732786,2.5465127 L11.8732786,10.8141477 Z' id='Fill-109'%3E%3C/path%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E">
+            <span class="usage-page-tab__text">
+                Content Usage
+            </span>
+        </li>
+
+        <li class="usage-page-tab" data-target="user-behavior">
+            <span class="fa fa-user usage-page-tab__icon color-inherit"></span>
+            <span class="usage-page-tab__text">
+                User Behavior
+            </span>
+        </li>
+    </ul>
+
+    <div class="usage-page-controls">
+        <div class="xs-small usage-page-controls__item">
+            <select name="Group" id="group_id" class="pp_filter" searchable="Y">
+                <option value="-1">All Groups</option>
+            </select>
+        </div>
+
+        <div class="xs-small usage-page-controls__item pp_filter_content">
+            <select name="Category" id="category_id" class="pp_filter" searchable="Y">
+                <option value="">All Categories</option>
+            </select>
+        </div>
+
+        <div class="xs-small usage-page-controls__item pp_filter_content">
+            <select name="Data Source" id="data_source" class="pp_filter" searchable="Y">
+                <option value="">All Data Sources</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="usage-page-container opened" style="display: block;" id="content-usage">
+        <div class="usage-page-title t-black">
+            Content Usage for last 180 days
+        </div>
+
+        <div class="usage-page-content">
+            <div class="usage-page-table t-black" id="mostPopular" data-template="rowTemplate1">
+                <div class="usage-page-table__header t-blue">
+                    <img src="data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='18px' height='18px' viewBox='0 0 18 18' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3C!-- Generator: Sketch 61.1 (89650) - https://sketch.com --%3E%3Ctitle%3Enp_star_2660443_000000%3C/title%3E%3Cdesc%3ECreated with Sketch.%3C/desc%3E%3Cg id='Usage-Portal' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Cg id='UsagePortal-Content' transform='translate(-415.000000, -245.000000)'%3E%3Cg id='Group-10' transform='translate(415.000000, 245.000000)' fill='%2337809F' fill-rule='nonzero'%3E%3Cg id='np_star_2660443_000000'%3E%3Cpath d='M17.3822727,7.86702273 L17.0386977,7.52344773 C16.7318795,7.21662955 16.6176205,6.77078182 16.7318795,6.35369318 L16.8629155,5.88708409 C17.1042177,5.03613409 16.6048405,4.14844773 15.7538905,3.90714545 L15.4103155,3.8088675 C14.9852495,3.69061568 14.6616382,3.34624705 14.5673632,2.91318341 L14.4898589,2.56561977 C14.3995705,2.14853114 14.1502725,1.78818341 13.7899248,1.55487886 C13.429577,1.32157432 13.000502,1.24407205 12.5834339,1.33435841 L11.7980202,1.50614386 C11.4009157,1.5924375 10.9878361,1.47338386 10.7017793,1.18335068 L10.1328975,0.614468864 C9.83006795,0.311639318 9.42498614,0.143850682 8.99989977,0.143850682 C8.57002705,0.143850682 8.16973159,0.311641364 7.86690205,0.614468864 L7.52332705,0.958043864 C7.21650886,1.26486205 6.77066114,1.37912114 6.3535725,1.26486205 L5.89095205,1.13302636 C5.4778725,1.01876932 5.04401114,1.06750841 4.67167705,1.27604864 C4.29934295,1.48458273 4.02928159,1.82815773 3.91101341,2.24125773 L3.81273545,2.58483273 C3.69448364,3.00989864 3.350115,3.33351 2.91705136,3.427785 L2.56948773,3.50528932 C1.70655136,3.69385568 1.15364455,4.54879841 1.342215,5.41171432 L1.51400045,6.19712795 C1.60029409,6.59822114 1.48124045,7.00731205 1.19120727,7.29336886 L0.622325455,7.86225068 C0.319495909,8.16508023 0.151707273,8.57016205 0.151707273,8.99524841 C0.151707273,9.42512114 0.319497955,9.82541659 0.622325455,10.1282461 L0.965900455,10.4718211 C1.27271864,10.7786393 1.38697773,11.224487 1.27271864,11.6415757 L1.13289341,12.109003 C0.891591136,12.959953 1.39096841,13.8476393 2.24191841,14.0889416 L2.58549341,14.1872195 C3.01055932,14.3054714 3.33417068,14.64984 3.42844568,15.0829036 L3.50595,15.4304673 C3.59623841,15.8475559 3.84553636,16.2079036 4.20588409,16.4412082 C4.56623182,16.6745127 4.99530682,16.752015 5.412375,16.6617286 L6.19778864,16.4899432 C6.59888182,16.4036495 7.00797273,16.5227032 7.29402955,16.8127364 L7.86291136,17.3816182 C8.16574091,17.6844477 8.57082273,17.8522364 8.99590909,17.8522364 C9.42578182,17.8522364 9.82607727,17.6844457 10.1289068,17.3816182 L10.4724818,17.0380432 C10.7793,16.731225 11.2251477,16.6169659 11.6422364,16.731225 L12.1088455,16.8622609 C12.9597955,17.1035632 13.8474818,16.6041859 14.0887841,15.7532359 L14.187062,15.4096609 C14.3053139,14.984595 14.6496825,14.6609836 15.0827461,14.5667086 L15.4303098,14.4892043 C15.8473984,14.3989159 16.2077461,14.149618 16.4410507,13.7892702 C16.6743552,13.4289225 16.7518575,12.9998475 16.6615711,12.5827793 L16.4897857,11.7973657 C16.403492,11.3962725 16.5225457,10.9871816 16.8125789,10.7011248 L17.3814607,10.132243 C17.6842902,9.82941341 17.8520817,9.42433159 17.8520817,8.99924523 C17.8528778,8.57017023 17.6850859,8.16987477 17.3822584,7.86704523 L17.3822727,7.86702273 Z M14.3181818,9.00002045 C14.3181818,11.9332023 11.9331818,14.3182023 9,14.3182023 C6.06681818,14.3182023 3.68181818,11.9332023 3.68181818,9.00002045 C3.68181818,6.06683864 6.06681818,3.68183864 9,3.68183864 C11.9331818,3.68183864 14.3181818,6.06683864 14.3181818,9.00002045 Z' id='Shape'%3E%3C/path%3E%3Cpath d='M12.0434318,7.87090909 L10.3127932,7.62561818 C10.2432805,7.61363305 10.2025309,7.58486864 10.1737657,7.52734023 L9.38835205,5.94849477 C9.31883932,5.79748295 9.16783159,5.70320386 8.9912475,5.70320386 C8.82745159,5.70320386 8.67643159,5.80148182 8.59414295,5.94849477 L7.80952705,7.52734023 C7.78076182,7.58087386 7.72802795,7.60883932 7.67049955,7.62561818 L5.93986091,7.88768182 C5.776065,7.916445 5.63703136,8.02670932 5.58429955,8.19051136 C5.53076591,8.35430727 5.57231461,8.53408636 5.69456182,8.65712045 L6.95859136,9.89239091 C6.99934091,9.93314045 7.02810409,9.99066886 7.012125,10.0434027 L6.70929545,11.7740414 C6.68053227,11.9378373 6.750045,12.1176164 6.8890725,12.2159005 C6.97057159,12.2694341 7.05286841,12.2973995 7.15113614,12.2973995 C7.22064886,12.2973995 7.29016364,12.2854144 7.35568159,12.2438659 L8.91055432,11.4336818 C8.96408795,11.4049166 9.02081659,11.4049166 9.07435023,11.4336818 L10.629223,12.2438659 C10.7930189,12.3133786 10.972798,12.2973995 11.1118275,12.2031164 C11.250855,12.1088332 11.316373,11.9290664 11.2916045,11.7612573 L10.988775,10.0306186 C10.988775,9.977085 11.0007601,9.92035636 11.0423086,9.87960682 L12.3063382,8.64433636 C12.4293845,8.52129 12.4701341,8.34150682 12.4166005,8.17772727 C12.3630668,8.00993659 12.2240393,7.89966818 12.0434686,7.87090909 L12.0434318,7.87090909 Z' id='Path'%3E%3C/path%3E%3C/g%3E%3C/g%3E%3Crect id='Rectangle-34-Copy-10' stroke='%23EBEBEB' x='261.5' y='238.5' width='423' height='368' rx='3'%3E%3C/rect%3E%3C/g%3E%3C/g%3E%3C/svg%3E"
+                         alt="#" style="top: -1px"
+                         class="usage-page-table__svg">
+                    Most Popular
+                </div>
+
+                <div class="usage-page-table__row usage-page-table-f-table__titles">
+                    <div class="usage-page-table__col-1">
+                        Name
+                    </div>
+                    <div class="usage-page-table__col-r usage-page-table-f-table__col-r">
+                        Views
+                    </div>
+                    <div class="usage-page-table__col-r usage-page-table-f-table__col-r">
+                        Users
+                    </div>
+                    <div class="usage-page-table__col-r usage-page-table-f-table__col-r">
+                        Emailed
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="usage-page-table t-black" id="increasingPopularity" data-template="rowTemplate2">
+                <div class="usage-page-table__header t-blue">
+                    <img src="data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='16px' height='18px' viewBox='0 0 16 18' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3C!-- Generator: Sketch 61.1 (89650) - https://sketch.com --%3E%3Ctitle%3EIncrease%3C/title%3E%3Cdesc%3ECreated with Sketch.%3C/desc%3E%3Cg id='Usage-Portal' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Cg id='UsagePortal-Content' transform='translate(-842.000000, -244.000000)'%3E%3Cg id='Group-9' transform='translate(842.000000, 244.000000)' fill='%2337809F' fill-rule='nonzero'%3E%3Cg id='Increase' transform='translate(-0.000000, 0.000000)'%3E%3Cpolygon id='Path' points='0.5383101 13.1192603 3.52943385 13.1192603 3.52943385 17.7767027 0.5383101 17.7767027'%3E%3C/polygon%3E%3Cpolygon id='Path' points='4.42077952 11.4485633 7.4137468 11.4485633 7.4137468 17.7767027 4.42077952 17.7767027'%3E%3C/polygon%3E%3Cpolygon id='Path' points='8.21660313 8.9892973 11.2077269 8.9892973 11.2077269 17.7757809 8.21660313 17.7757809'%3E%3C/polygon%3E%3Cpolygon id='Path' points='12.0999943 6.29797724 15.0929616 6.29797724 15.0929616 17.7767027 12.0999943 17.7767027'%3E%3C/polygon%3E%3Cpath d='M14.173963,0.741789474 L14.173963,2.73745434 C14.173963,3.05520939 13.9156156,3.31355676 13.5978606,3.31355676 C13.2792068,3.31355676 13.0217582,3.05520939 13.0217582,2.73745434 L13.0217582,2.2765724 C7.41927738,8.40123243 1.2206458,10.4203562 0.941581792,10.5076933 C0.88397155,10.5256965 0.826361309,10.5355974 0.768751067,10.5355974 C0.524806259,10.5355974 0.296162731,10.378969 0.21785889,10.1323257 C0.123341223,9.83077067 0.288970669,9.50580282 0.593224182,9.40860282 C0.659835448,9.38789908 6.89071494,7.35083411 12.333961,1.3180509 L11.5994304,1.3180509 C11.2807767,1.3180509 11.023328,1.05970353 11.023328,0.741948478 C11.023328,0.424193428 11.2807767,0.16584606 11.5994304,0.16584606 L13.5977915,0.16584606 C13.6247968,0.16584606 13.6509012,0.168546597 13.6788053,0.17304734 C13.6905073,0.17304734 13.7022089,0.175747878 13.7112099,0.177548083 C13.9749496,0.230657812 14.173963,0.463801852 14.173963,0.7419441 L14.173963,0.741789474 Z' id='Path'%3E%3C/path%3E%3C/g%3E%3C/g%3E%3Crect id='Rectangle-34-Copy-11' stroke='%23EBEBEB' x='715.5' y='238.5' width='423' height='368' rx='3'%3E%3C/rect%3E%3C/g%3E%3C/g%3E%3C/svg%3E"
+                         alt="#" style="top: -3px"
+                         class="usage-page-table__svg">
+                    Increasing Popularity
+                </div>
+
+                <div class="usage-page-table__row usage-page-table__row--titles">
+                    <div class="usage-page-table__col-1">
+                        Name
+                    </div>
+                    <div class="usage-page-table__col-r">
+                        Views
+                    </div>
+                    <div class="usage-page-table__col-r usage-page-table__col-2">
+                        Increase
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="usage-page-table t-black" id="unusedTiles" data-template="rowTemplate4">
+                <div class="usage-page-table__header t-blue">
+                    <img src="data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='14px' height='14px' viewBox='0 0 14 14' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3C!-- Generator: Sketch 61.1 (89650) - https://sketch.com --%3E%3Ctitle%3Enp_cancel_89818_000000%3C/title%3E%3Cdesc%3ECreated with Sketch.%3C/desc%3E%3Cg id='Usage-Portal' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Cg id='UsagePortal-Content' transform='translate(-416.000000, -646.000000)'%3E%3Cg id='Group-11' transform='translate(416.000000, 645.000000)' fill='%2337809F' fill-rule='nonzero'%3E%3Cg id='np_cancel_89818_000000' transform='translate(0.000000, 1.000000)'%3E%3Cpolygon id='Path' points='14 1.75 12.25 0 7 5.25 1.75 0 0 1.75 5.25 7 0 12.25 1.75 14 7 8.75 12.25 14 14 12.25 8.75 7'%3E%3C/polygon%3E%3C/g%3E%3C/g%3E%3Crect id='Rectangle-34-Copy-10' stroke='%23EBEBEB' x='261.5' y='637.5' width='423' height='368' rx='3'%3E%3C/rect%3E%3C/g%3E%3C/g%3E%3C/svg%3E"
+                         alt="#" style="top: -1px;"
+                         class="usage-page-table__svg">
+                    Unused Tiles
+                </div>
+
+                <div class="usage-page-table__row usage-page-table__row--titles">
+                    <div class="usage-page-table__col-1">
+                        Name
+                    </div>
+                    <div class="usage-page-table__col-r">
+                        Views
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="usage-page-table t-black" id="decreasingPopularity" data-template="rowTemplate2">
+                <div class="usage-page-table__header t-blue">
+                    <img src="data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='16px' height='17px' viewBox='0 0 16 17' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3C!-- Generator: Sketch 61.1 (89650) - https://sketch.com --%3E%3Ctitle%3EGroup 7%3C/title%3E%3Cdesc%3ECreated with Sketch.%3C/desc%3E%3Cg id='Usage-Portal' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Cg id='UsagePortal-Content' transform='translate(-838.000000, -643.000000)'%3E%3Cg id='Group-8' transform='translate(838.000000, 639.000000)' fill='%2337809F' fill-rule='nonzero'%3E%3Cg id='Group-7' transform='translate(-0.000000, 0.000000)'%3E%3Cg id='Group-6' transform='translate(7.333333, 15.718876) scale(-1, 1) translate(-7.333333, -15.718876) translate(0.000000, 9.760543)'%3E%3Cpolygon id='Path' points='-4.84427313e-14 6.60022297 2.89418919 6.60022297 2.89418919 11.1067297 -4.84427313e-14 11.1067297'%3E%3C/polygon%3E%3Cpolygon id='Path' points='3.75664865 4.98366892 6.65262162 4.98366892 6.65262162 11.1067297 3.75664865 11.1067297'%3E%3C/polygon%3E%3Cpolygon id='Path' points='7.42945946 2.60410135 10.3236486 2.60410135 10.3236486 11.1058378 7.42945946 11.1058378'%3E%3C/polygon%3E%3Cpolygon id='Path' points='11.187 -3.41948692e-14 14.082973 -3.41948692e-14 14.082973 11.1067297 11.187 11.1067297'%3E%3C/polygon%3E%3C/g%3E%3Cpath d='M14.8419662,6.15493579 C14.8419662,6.46239322 14.5919912,6.71236822 14.2845338,6.71236822 C13.9762067,6.71236822 13.7271013,6.46239322 13.7271013,6.15493579 L13.7271013,5.70898984 C8.30618241,11.6351655 2.30843241,13.5888547 2.03841214,13.6733615 C1.9826689,13.6907812 1.92692565,13.7003613 1.87118241,13.7003613 C1.63514322,13.7003613 1.41390944,13.5488088 1.33814322,13.3101586 C1.24668863,13.0183761 1.40695045,12.7039396 1.7013439,12.6098896 C1.76579646,12.5898569 7.7947493,10.6188079 13.0615939,4.78153153 L12.3508675,4.78153153 C12.0425405,4.78153153 11.7934351,4.53155653 11.7934351,4.2240991 C11.7934351,3.91664167 12.0425405,3.66666667 12.3508675,3.66666667 L14.2844669,3.66666667 C14.3105971,3.66666667 14.3358555,3.66927969 14.3628552,3.67363457 C14.374178,3.67363457 14.3855004,3.67624759 14.3942097,3.67798946 C14.6494023,3.72937804 14.8419662,3.95496648 14.8419662,4.22409486 L14.8419662,6.15493579 Z' id='Path' transform='translate(8.077217, 8.683514) scale(-1, -1) rotate(245.000000) translate(-8.077217, -8.683514) '%3E%3C/path%3E%3C/g%3E%3C/g%3E%3Crect id='Rectangle-34-Copy-11' stroke='%23EBEBEB' x='715.5' y='637.5' width='423' height='368' rx='3'%3E%3C/rect%3E%3C/g%3E%3C/g%3E%3C/svg%3E"
+                         alt="#" style="top: -2px"
+                         class="usage-page-table__svg">
+                    Decreasing Popularity
+                </div>
+
+                <div class="usage-page-table__row usage-page-table__row--titles">
+                    <div class="usage-page-table__col-1">
+                        Name
+                    </div>
+                    <div class="usage-page-table__col-r">
+                        Views
+                    </div>
+                    <div class="usage-page-table__col-r usage-page-table__col-2">
+                        Increase
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="usage-page-container" id="user-behavior">
+
+        <iframe id="dChartIframe" style="display: block; width:1100px; margin: 0 auto 30px; height:680px; border: 0px none;" frameBorder="0" src="/report/index/customview/element/1894/width/1100/height/600/block_uid/block_uid_2"></iframe>
+
+
+        <div class="usage-page-title t-black">
+            User Behavior for last 180 days
+        </div>
+
+        <div class="usage-page-content">
+            <div class="usage-page-table t-black" id="successfulSearches" data-template="rowTemplate3">
+                <div class="usage-page-table__header t-blue">
+                    <img src="data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='18px' height='19px' viewBox='0 0 18 19' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3C!-- Generator: Sketch 61.1 (89650) - https://sketch.com --%3E%3Ctitle%3EShape%3C/title%3E%3Cdesc%3ECreated with Sketch.%3C/desc%3E%3Cg id='Usage-Portal' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Cg id='UsagePortal-Behavior' transform='translate(-388.000000, -631.000000)'%3E%3Cg id='Group-7' transform='translate(388.000000, 631.000000)' fill='%2337809F'%3E%3Cpath d='M11.5081967,13.2786885 C9.93442623,13.2786885 8.45901639,12.7868852 7.18032787,11.704918 L6.8852459,13.0819672 L2.85245902,17.704918 C2.55737705,17.9016393 2.16393443,18.0983607 1.7704918,18.0983607 C0.786885246,18.0983607 4.61852778e-14,17.2131148 4.61852778e-14,16.3278689 C4.61852778e-14,15.9344262 0.0983606557,15.5409836 0.393442623,15.2459016 L5.01639344,11.2131148 L6.39344262,10.9180328 C5.31147541,9.63934426 4.81967213,8.16393443 4.81967213,6.59016393 C4.81967213,2.95081967 7.86885246,7.10542736e-14 11.4098361,7.10542736e-14 C14.9508197,7.10542736e-14 18,3.04918033 18,6.59016393 C18,8.36065574 17.4098361,10.0327869 16.1311475,11.3114754 C14.9508197,12.5901639 13.2786885,13.2786885 11.5081967,13.2786885 L11.5081967,13.2786885 Z M11.5081967,11.4098361 C14.0655738,11.4098361 16.2295082,9.24590164 16.2295082,6.59016393 C16.2295082,4.03278689 14.0655738,1.86885246 11.5081967,1.86885246 C8.85245902,1.86885246 6.78688525,4.03278689 6.78688525,6.59016393 C6.78688525,7.86885246 7.27868852,9.04918033 8.16393443,10.0327869 C9.14754098,10.9180328 10.3278689,11.4098361 11.5081967,11.4098361 L11.5081967,11.4098361 Z' id='Shape'%3E%3C/path%3E%3C/g%3E%3Crect id='Rectangle-34-Copy-10' stroke='%23EBEBEB' x='261.5' y='624.5' width='423' height='368' rx='3'%3E%3C/rect%3E%3C/g%3E%3C/g%3E%3C/svg%3E"
+                         alt="#"
+                         class="usage-page-table__svg">
+                    Successful Searches
+                </div>
+
+                <div class="usage-page-table__row usage-page-table__row--titles">
+                    <div class="usage-page-table__col-1">
+                        Name
+                    </div>
+                    <div class="usage-page-table__col-r">
+                        Searches
+                    </div>
+                </div>
+            </div>
+
+            <div class="usage-page-table t-black" id="unsuccessfulSearches" data-template="rowTemplate3">
+                <div class="usage-page-table__header t-blue">
+                    <img src="data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='18px' height='18px' viewBox='0 0 18 18' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3C!-- Generator: Sketch 61.1 (89650) - https://sketch.com --%3E%3Ctitle%3Enp_not-found_2157340_000000%3C/title%3E%3Cdesc%3ECreated with Sketch.%3C/desc%3E%3Cg id='Usage-Portal' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Cg id='UsagePortal-Behavior' transform='translate(-832.000000, -630.000000)'%3E%3Cg id='Group-6' transform='translate(832.000000, 630.000000)' fill='%2337809F' fill-rule='nonzero'%3E%3Cg id='np_not-found_2157340_000000'%3E%3Cpath d='M17.5685625,14.9435625 L14.4564375,11.8314375 C14.0623875,11.4373875 13.4625375,11.4190875 13.0311375,11.718645 L11.9251875,10.612695 C13.856625,8.0441325 13.6690875,4.3687575 11.3253375,2.0250075 C8.756775,-0.543555 4.5944625,-0.543555 2.0249625,2.0250075 C-0.5436,4.59357 -0.5436,8.7558825 2.0249625,11.3253825 C4.3687125,13.6691325 8.0440875,13.8566325 10.61265,11.9252325 L11.7186,13.0311825 C11.4183,13.4808825 11.4564,14.0624325 11.8313925,14.4564825 L14.9442675,17.5693575 C15.3939675,18.0190575 16.1066175,18.0190575 16.5570675,17.5693575 L17.5692675,16.5571575 C18.0189675,16.1250263 18.0189675,15.3940762 17.5685351,14.9436262 L17.5685625,14.9435625 Z M3.3185625,10.012125 C1.4809125,8.174475 1.4809125,5.1744375 3.3185625,3.33675 C5.1562125,1.4990625 8.15625,1.4991 9.9939375,3.33675 C11.831625,5.1744 11.8315875,8.1744375 9.9939375,10.012125 C8.1562875,11.849775 5.175375,11.849775 3.3185625,10.012125 Z' id='Shape'%3E%3C/path%3E%3Cpath d='M8.6814375,4.668375 C8.3811375,4.368075 7.8940875,4.368075 7.5937875,4.668375 L6.6753375,5.586825 L5.7568875,4.668375 C5.4565875,4.368075 4.9695375,4.368075 4.6692375,4.668375 C4.3689375,4.968675 4.3689375,5.455725 4.6692375,5.756025 L5.5876875,6.674475 L4.6692375,7.592925 C4.3689375,7.893225 4.3689375,8.380275 4.6692375,8.680575 C4.81938375,8.83072125 5.0068875,8.905425 5.2126875,8.905425 C5.4192375,8.905425 5.6067375,8.8307175 5.7561375,8.680575 L6.6745875,7.762125 L7.5930375,8.680575 C7.74318375,8.83072125 7.9489875,8.905425 8.1364875,8.905425 C8.3239875,8.905425 8.5305375,8.8307175 8.6799375,8.680575 C8.9802375,8.380275 8.9802375,7.893225 8.6799375,7.592925 L7.7614875,6.674475 L8.6799375,5.756025 C8.98096875,5.45645625 8.98096875,4.968675 8.68140225,4.668375 L8.6814375,4.668375 Z' id='Path'%3E%3C/path%3E%3C/g%3E%3C/g%3E%3Crect id='Rectangle-34-Copy-11' stroke='%23EBEBEB' x='715.5' y='624.5' width='423' height='368' rx='3'%3E%3C/rect%3E%3C/g%3E%3C/g%3E%3C/svg%3E"
+                         alt="#"
+                         class="usage-page-table__svg">
+                    Unsuccessful Searches
+                </div>
+
+                <div class="usage-page-table__row usage-page-table__row--titles">
+                    <div class="usage-page-table__col-1">
+                        Name
+                    </div>
+                    <div class="usage-page-table__col-r">
+                        Searches
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="dGraphWrapper">
+        <div class="graph-container">
+
+            <script>eval(mod_pagespeed_J08wc1Pr4W);</script>
+            <script>eval(mod_pagespeed_3tCRL63kGd);</script>
+
+            <div class="main-control-box">
+                <div id="top-control" class="top-control">
+                    <input type="text" id="dSelectUserForGraph"/>
+                </div>
+                <div class="bottom-graph-slider">
+                    <button class="btn trt btn-xs-small mr-5 graph-slider-play-btn"
+                            type="button"
+                            id="dPlayButton"
+                            onclick="userElementGraph.togglePlayBack()">
+                        <i class="fa fa-play-circle"></i>
+                        Play
+                    </button>
+                    <div id="slider-day-elapsed" class="slider-day-elapsed"></div>
+
+                    <div class="slider-day-elapsed__days">
+                        Day<div id="day-elapsed" style="display:inline-block; margin-left: 2px"></div>
+                    </div>
+
+                    <div class="slider-day-elapsed__full-date" id="dFullDate"></div>
+
+                    <div class="displayF" style="align-items: center;">
+                        <div class="custom_select xs-small" style="width: 70px">
+                            <select id="dDaysSelect">
+                                <option value="30">30</option>
+                                <option selected="selected" value="60">60</option>
+                                <option value="90">90</option>
+                                <option value="120">120</option>
+                                <option value="180">180</option>
+                            </select>
+                        </div>
+                        <div class="slider-day-history">days of history</div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!--<div class="mt-20">Step Delay <input class="up-input" style="width: 60px; margin: 0 3px;" type="text" value="1000" id="dStepDelay"> ms</div>-->
+
+            <div class="graph-wrapper">
+                <div id="bottom-graph-control" class="graph-control-user">
+                <span id="dTotalConnectedUser">
+                    <div class="graph-control-user__title">
+                        <span class="dActiveEntityName"></span>
+                    </div>
+                    <div class="graph-control-user__text">
+                        Viewed <span class="dTotalConnected"></span>
+                    </div>
+                </span>
+                    <span id="dTotalConnectedElement">
+                    <div class="graph-control-user__title">
+                        <span class="dActiveEntityName"></span>
+                    </div>
+                    <div class="graph-control-user__text">
+                        Viewed by <span class="dTotalConnected"></span>
+                    </div>
+                </span>
+                </div>
+                <div id="graph" style=""></div>
+            </div>
+
+
+            <div id="dLegendWrapper">
+                <div id="dUserLegend" class="up-legend-container"></div>
+                <div id="dElementLegend" class="up-legend-container"></div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="rowTemplate1">
+    <% for(var $i=0;$i<$T.data.length;$i++) {
+    var $row = $T.data[$i]; %>
+    <div class="usage-page-table__row usage-page-table__row__data">
+        <a href="/report/index/index/element/<%=$T.linkReport.id%>?<%=$T.linkReport.filter%>=<%=encodeURIComponent($row.name)%>" class="usage-page-table__col-1">
+            <%=$row.segment ? ($row.name + " (dimensioned by " + $row.segment + ")")  : $row.name%>
+        </a>
+        <div class="usage-page-table__col-r usage-page-table__col-with-icon" onclick="openVizPopup('<%=$row.element_id%>')">
+            <div class="usage-page-table__view-count">
+                <%=number_format($row.total_view_count,0,'.',',')%>
+            </div>
+            <div ext:qtip="Show time-lapse usage" class="usage-page-table__view-icon">
+                <svg width="14" height="14" xmlns="http://www.w3.org/2000/svg"><g transform="translate(-1071 -1528)" fill="none" fill-rule="evenodd"><path fill="#FBFBFB" d="M712 1521h423v29H712z"/><rect stroke="#EBEBEB" x="711.5" y="1455.5" width="423" height="368" rx="3"/><g transform="translate(1072 1529)"><circle stroke="#37809F" cx="6" cy="6" r="6"/><circle stroke="#37809F" cx="6" cy="6" r="4"/><circle fill="#37809F" cx="6" cy="6" r="2"/></g></g></svg>
+            </div>
+        </div>
+        <div class="usage-page-table__col-r usage-page-table-f-table__col-r">
+            <div class="usage-page-table__view-count">
+                <%=number_format($row.unique_users_amount,0,'.',',')%>
+            </div>
+        </div>
+
+        <div class="usage-page-table__col-r usage-page-table-f-table__col-r">
+            <div class="usage-page-table__view-count">
+                <%=number_format($row.email_amount,0,'.',',')%>
+            </div>
+        </div>
+    </div>
+    <% } %>
+</script>
+
+<script type="text/html" id="rowTemplate4">
+    <% for(var $i=0;$i<$T.data.length;$i++) {
+    var $row = $T.data[$i]; %>
+    <div class="usage-page-table__row usage-page-table__row__data">
+        <a href="/report/index/index/element/<%=$T.unusedReport.id%>?<%=$T.unusedReport.filter%>=<%=encodeURIComponent($row.name)%>" class="usage-page-table__col-1">
+            <%=$row.name%>
+        </a>
+        <div class="usage-page-table__col-r">
+            <%=number_format($row.total_view_count,0,'.',',')%>
+        </div>
+    </div>
+    <% } %>
+</script>
+
+<script type="text/html" id="rowTemplate2">
+    <% for(var $i=0;$i<$T.data.length;$i++) {
+    var $row = $T.data[$i]; %>
+    <div class="usage-page-table__row usage-page-table__row__data">
+        <a href="/report/index/index/element/<%=$T.linkReport.id%>?<%=$T.linkReport.filter%>=<%=encodeURIComponent($row.name)%>" class="usage-page-table__col-1">
+            <%=$row.name%>
+        </a>
+        <div class="usage-page-table__col-r">
+            <%=number_format($row.total_view_count,0,'.',',')%>
+        </div>
+        <div class="usage-page-table__col-r usage-page-table__col-2">
+            <%=formatPercent($row.score)%>
+        </div>
+    </div>
+    <% } %>
+</script>
+
+<script type="text/html" id="rowTemplate3">
+    <% for(var $i=0;$i<$T.data.length;$i++) {
+    var $row = $T.data[$i]; %>
+    <div class="usage-page-table__row usage-page-table__row__data">
+        <a href="/dataset/index/index/ds/<%-$T.dataset_id%>" class="usage-page-table__col-1">
+            <%=$row.search_text%>
+        </a>
+        <div class="usage-page-table__col-r">
+            <%=number_format($row.searches_count,0,'.',',')%>
+        </div>
+    </div>
+    <% } %>
+</script>
+
+<script>
+    $('#dGraphWrapper').hide();
+    function tabs() {
+        var $target = $(this).attr('data-target'),
+            $container = $(`#${$target}`);
+
+        $('.usage-page-tab.active').removeClass('active');
+        $(this).addClass('active');
+        $('.usage-page-container.opened').hide();
+        $container.addClass('opened').show();
+
+        if('content-usage'===$target){
+            $('#dGraphWrapper').hide();
+            changeVisualizationType('Element');
+            $('.pp_filter_content').show();
+        }
+        else{
+            changeVisualizationType('User');
+            $('#dGraphWrapper').show();
+            $('.pp_filter_content').hide();
+            if(document.getElementById('dChartIframe').contentWindow.dsRendererViewer)
+                document.getElementById('dChartIframe').contentWindow.dsRendererViewer.blocks[0].components[0].render();
+        }
+
+    }
+
+    $(document).on('click', '.usage-page-tab', tabs);
+
+    function openVizPopup(elementId){
+        var popup = DevxPopup.openLocal({data: ' ', id: 'dVizPopup', width:'1200px', height:'850px', onClose: function(){
+                $('#dGraphWrapper').append($('.graph-container'));
+                userElementGraph.stopPlayBack();
+                userElementGraph.setDayElapsed(0);
+            }});
+        $('#dVizPopup #dVizPopupinner').append($('.graph-container'));
+        $('#dSelectUserForGraph').val(elementId).select2("val", elementId).change();
+    }
+
+
+    $('#dDaysSelect').change(function(){
+        userElementGraph.stopPlayBack();
+        userElementGraph.setDayElapsed(0);
+        maxDays = parseInt($(this).val());
+        $('#slider-day-elapsed').slider("option", "max", maxDays);
+        userElementGraph.setMaxDays(maxDays);
+        userElementGraph.render();
+    });
+
+
+    var nowDate = new Date();
+    nowDate.setDate(nowDate.getDate() - 60);
+    $('#dFullDate').text(nowDate.format('M d, Y'));
+
+
+    var baseSrc = $('#dChartIframe').attr('src');
+    $('#group_id').change(function(){
+        if($(this).val() == -1){
+            $('#dChartIframe').attr('src', baseSrc);
+        }else{
+            $('#dChartIframe').attr('src', baseSrc+'?group_name='+$(this).find('option:selected').text());
+        }
+    });
+
+    $(document).ready(function(){
+        $('select[searchable="Y"]').selectPopup({triggerClass: "popupSelectTrigger"});
+    })
+</script>
+
+<script>
+
+</script>
+
+<script src="/js/libs/custom/usage-page/main.js"></script>
+<script src="/js/libs/custom/usage-page/userElementGraph.js"></script>
