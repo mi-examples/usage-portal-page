@@ -399,6 +399,9 @@
             };*/
 
 
+        var mask = new Ext.DevxBodyMask({msg: 'Loading...'});
+        mask.show();
+
         var filtersDatasetId = 'filters-dataset',
             datasets = {
                 "mostPopular":{"id":'most-popular',"sort":"total_view_count"},
@@ -447,6 +450,7 @@
                     var el = $(this);
                     el.append(templates[el.data('template')]({"$T":{"dataset_id":datasets[k].id, 'linkReport':linkReport, "unusedReport":unusedReport, "data":filterData(k, datasets[k].data)}}));
                 });
+            mask.hide();
         };
 
         var renderFilters = function(data){
